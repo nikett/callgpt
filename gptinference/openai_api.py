@@ -1,4 +1,3 @@
-from collections import Counter
 import os
 from typing import Dict, Any, List, Union
 import openai

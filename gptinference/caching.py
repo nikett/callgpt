@@ -4,7 +4,7 @@ import time
 from dataclasses import dataclass, field
 from typing import Dict, List
 
-from utils import read_jsonl_or_json, write_txt, write_jsonl
+from gptinference.utils import read_jsonl_or_json, write_txt, write_jsonl
 
 
 import atexit

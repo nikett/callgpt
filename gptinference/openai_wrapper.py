@@ -1,8 +1,8 @@
 from typing import List
 
-import openai_api
-from utils import newline, shorten
-from caching import Caching, OpenAICacheKey, OpenAICacheValue
+from gptinference.openai_api import OpenaiAPIWrapper
+from gptinference.utils import newline, shorten
+from gptinference.caching import Caching, OpenAICacheKey, OpenAICacheValue
 
 
 class OpenAIWrapper:
@@ -20,13 +20,13 @@ class OpenAIWrapper:
             cache_val = self.cache.get(key=cache_key)
             if not cache_val:
                 print(f"\nCalling GPT3: {shorten(prompt, max_words=10)}...")
-                val_dict = openai_api.OpenaiAPIWrapper.call(prompt=prompt,
+                val_dict = OpenaiAPIWrapper.call(prompt=prompt,
                                                  engine=engine,
                                                  max_tokens=max_tokens,
                                                  stop_token=stop_token,
                                                  temperature=temperature)
                 cache_val = self.cache.set(key=cache_key, value=OpenAICacheValue(
-                    first_response=str(openai_api.OpenaiAPIWrapper.get_first_response(response=val_dict, engine=engine))
+                    first_response=str(OpenaiAPIWrapper.get_first_response(response=val_dict, engine=engine))
                 ))
 
             return cache_val.first_response
@@ -48,12 +48,12 @@ class OpenAIWrapper:
             print(f"\nCalling GPT3 as a batch for ({len(uncached_prompts)}/ {len(precached_entries)}) "
                   f"prompts: {(newline+newline).join([shorten(p, max_words=10)+ '...' for p in uncached_prompts])}")
 
-            batched_response = openai_api.OpenaiAPIWrapper.call(prompt=uncached_prompts,
+            batched_response = OpenaiAPIWrapper.call(prompt=uncached_prompts,
                                                         engine=engine,
                                                         max_tokens=max_tokens, stop_token=stop_token,
                                                         temperature=temperature)
 
-            for prompt, completion in zip(uncached_prompts, openai_api.OpenaiAPIWrapper.get_first_response_batched(response=batched_response, engine=engine)):
+            for prompt, completion in zip(uncached_prompts, OpenaiAPIWrapper.get_first_response_batched(response=batched_response, engine=engine)):
                 value = OpenAICacheValue(first_response= completion.strip())
                 precached_entries[prompt] = value
                 cache_key = self.mk_cache_key(prompt=prompt, engine=engine, stop_token=stop_token, temperature=temperature, max_tokens=max_tokens)

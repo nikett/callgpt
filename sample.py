@@ -1,5 +1,5 @@
-from base_prompt import Prompt
-from openai_wrapper import OpenAIWrapper
+from gptinference.base_prompt import Prompt
+from gptinference.openai_wrapper import OpenAIWrapper
 
 
 class AbstractTakeawayForClaimTask(Prompt):
