@@ -5,7 +5,7 @@ setup(name='callgpt',
       description="Library for running few-shot inference on GPT models",
       packages=find_packages(),
       install_requires=[
-          openai
+          'openai'
       ],
       license='Apache License 2.0',
       long_description=open('README.md').read(),
