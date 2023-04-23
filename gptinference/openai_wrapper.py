@@ -19,7 +19,7 @@ class OpenAIWrapper:
                                        max_tokens=max_tokens)
             cache_val = self.cache.get(key=cache_key)
             if not cache_val:
-                print(f"\nCalling GPT3: {shorten(prompt, max_words=10)}...")
+                # print(f"\nCalling GPT3: {shorten(prompt, max_words=10)}...")
                 val_dict = OpenaiAPIWrapper.call(prompt=prompt,
                                                  engine=engine,
                                                  max_tokens=max_tokens,
@@ -45,8 +45,8 @@ class OpenAIWrapper:
             precached_entries = {prompt: self.cache.get(key=cache_key) for cache_key, prompt in zip(cache_keys, prompts)}
             uncached_prompts   = [prompt for prompt, cached_entry in precached_entries.items() if not cached_entry]
 
-            print(f"\nCalling GPT3 as a batch for ({len(uncached_prompts)}/ {len(precached_entries)}) "
-                  f"prompts: {(newline+newline).join([shorten(p, max_words=10)+ '...' for p in uncached_prompts])}")
+            # print(f"\nCalling GPT3 as a batch for ({len(uncached_prompts)}/ {len(precached_entries)}) "
+            #       f"prompts: {(newline+newline).join([shorten(p, max_words=10)+ '...' for p in uncached_prompts])}")
 
             batched_response = OpenaiAPIWrapper.call(prompt=uncached_prompts,
                                                         engine=engine,
