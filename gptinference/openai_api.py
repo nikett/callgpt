@@ -8,7 +8,7 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 # check if org is set
 if os.getenv("OPENAI_ORG") is not None:
     openai.organization = os.getenv("OPENAI_ORG")
-MAX_TRIES= os.getenv("OPENAI_MAX_TRIES_INT") or 10
+MAX_TRIES= int(os.getenv("OPENAI_MAX_TRIES_INT")) if os.getenv("OPENAI_MAX_TRIES_INT") is not None else 10
 
 # from https://github.com/openai/openai-cookbook/blob/main/examples/How_to_handle_rate_limits.ipynb
 def retry_with_exponential_backoff(
