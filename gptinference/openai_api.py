@@ -55,7 +55,7 @@ def retry_with_exponential_backoff(
 
 
 def is_chat_based_agent(engine):
-    return engine.lower().strip() == "gpt-3.5-turbo"
+    return engine.lower().strip() == "gpt-3.5-turbo" or engine.lower().strip() == "gpt-4"
 
 
 class OpenaiAPIWrapper:
