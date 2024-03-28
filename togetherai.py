@@ -1,22 +1,25 @@
+from openai import OpenAI
 import os
-import openai
 
-# Set up the OpenAI client
-system_content = "You are a travel agent. Be descriptive and helpful."
-user_content = "Tell me about San Francisco"
-client = openai.OpenAI(
-    api_key=os.environ.get("TOGETHER_API_KEY"),
-    base_url="https://api.together.xyz/v1",
-    )
-stream = client.chat.completions.create(
-    model="mistralai/Mixtral-8x7B-Instruct-v0.1",
-    messages=[
-        {"role": "system", "content": system_content},
-        {"role": "user", "content": user_content},
-    ],
-    stream=True,
-    max_tokens=1024,
-    stop=['</s>']
+TOGETHER_API_KEY = os.environ.get("TOGETHER_API_KEY")
+
+client = OpenAI(
+  api_key=TOGETHER_API_KEY,
+  base_url='https://api.together.xyz/v1',
 )
-for chunk in stream:
-    print(chunk.choices[0].delta.content or "", end="", flush=True)
+
+chat_completion = client.chat.completions.create(
+  messages=[
+    {
+      "role": "system",
+      "content": "You are an expert travel guide.",
+    },
+    {
+      "role": "user",
+      "content": "Tell me fun things to do in San Francisco.",
+    }
+  ],
+  model="mistralai/Mixtral-8x7B-Instruct-v0.1"
+)
+
+print(chat_completion.choices[0].message.content)
