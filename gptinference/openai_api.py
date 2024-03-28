@@ -3,7 +3,6 @@ from typing import Dict, Any, List, Union
 import openai
 import random
 import time
-from openai import RateLimitError
 
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -19,7 +18,7 @@ def retry_with_exponential_backoff(
     exponential_base: float = 2,
     jitter: bool = True,
     max_retries: int = MAX_TRIES,
-    errors: tuple = (RateLimitError,),
+    errors: tuple = (openai.RateLimitError,),
 ):
     """Retry a function with exponential backoff."""
 
