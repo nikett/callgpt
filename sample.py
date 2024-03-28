@@ -61,6 +61,7 @@ Q2. How can someone accurately extract the main point of the abstract in relatio
 
 
 if __name__ == '__main__':
+    # Load from the cached file. This should run without a key.
     openai_wrapper = OpenAIWrapper(cache_path="cache.jsonl")
     gpt = AbstractTakeawayForClaimTask(engine="text-davinci-003", openai_wrapper=openai_wrapper)
     sample_claim = "snow makes people sick."

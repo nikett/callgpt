@@ -3,6 +3,8 @@ from typing import Dict, Any, List, Union
 import openai
 import random
 import time
+from openai import RateLimitError
+
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 # check if org is set
@@ -17,7 +19,7 @@ def retry_with_exponential_backoff(
     exponential_base: float = 2,
     jitter: bool = True,
     max_retries: int = MAX_TRIES,
-    errors: tuple = (openai.error.RateLimitError,),
+    errors: tuple = (RateLimitError,),
 ):
     """Retry a function with exponential backoff."""
 
@@ -62,21 +64,28 @@ class OpenaiAPIWrapper:
     @staticmethod
     @retry_with_exponential_backoff
     def call(
-        prompt: Union[str, List[str]],
+        prompt: Union[str, List[str], List[Dict[str, str]]],
         max_tokens: int,
         engine: str,
         stop_token: str,
         temperature: float,
         num_completions: int = 1
     ) -> dict:
-        if is_chat_based_agent(engine):
+        
+        if is_chat_based_agent(engine): # gpt 3.5 onwards.
             batched_requested = isinstance(prompt, List) and len(prompt) > 1
             assert not (batched_requested and is_chat_based_agent(engine)), \
-                f"Open AI does not support batched requests. Check your call to OpenaiAPIWrapper."
-            content = prompt[0] if isinstance(prompt, List) else prompt
+                f"Open AI does not support batched requests. Check your prompt in the call to OpenaiAPIWrapper."
+            
+            # check if prompt is a list of strings or a list of dictionaries
+            # gpt-3.5-turbo onwards does not support a batched list of prompts.
+            # but, the conversation API does support a list of dictionaries.
+            conversational_content = [{"role": "user", "content": prompt[0]}] if isinstance(prompt, List[str]) \
+                        else ([{"role": "user", "content": prompt}] if isinstance(prompt, str) \
+                        else prompt)
             response = openai.ChatCompletion.create(
                 model=engine,
-                messages=[{"role": "user", "content": content}],
+                messages=conversational_content,
                 temperature=temperature,
                 max_tokens=max_tokens,
                 top_p=1,
