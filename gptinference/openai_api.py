@@ -5,6 +5,7 @@ import random
 import time
 
 
+
 openai.api_key = os.getenv("OPENAI_API_KEY")
 # check if org is set
 if os.getenv("OPENAI_ORG") is not None:
@@ -18,7 +19,7 @@ def retry_with_exponential_backoff(
     exponential_base: float = 2,
     jitter: bool = True,
     max_retries: int = MAX_TRIES,
-    errors: tuple = (openai.RateLimitError,),
+    errors: tuple = (openai.error.RateLimitError),
 ):
     """Retry a function with exponential backoff."""
 
@@ -76,10 +77,13 @@ class OpenaiAPIWrapper:
             assert not (batched_requested and is_chat_based_agent(engine)), \
                 f"Open AI does not support batched requests. Check your prompt in the call to OpenaiAPIWrapper."
             
+            if isinstance(prompt, List):
+                assert len(prompt) > 1, f"No prompt given as input to call OpenAI API."
+
             # check if prompt is a list of strings or a list of dictionaries
             # gpt-3.5-turbo onwards does not support a batched list of prompts.
             # but, the conversation API does support a list of dictionaries.
-            conversational_content = [{"role": "user", "content": prompt[0]}] if isinstance(prompt, List[str]) \
+            conversational_content = [{"role": "user", "content": prompt[0]}] if isinstance(prompt, List) and isinstance(prompt[0], str) \
                         else ([{"role": "user", "content": prompt}] if isinstance(prompt, str) \
                         else prompt)
             response = openai.ChatCompletion.create(
