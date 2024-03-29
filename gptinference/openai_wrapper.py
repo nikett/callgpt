@@ -13,7 +13,7 @@ class OpenAIWrapper:
             if not prompt:
                 return ""
             cache_key = OpenAICacheKey(engine=engine,
-                                       prompt=prompt.lstrip(), # don't store new lines in the beginning.
+                                       prompt=str(prompt).lstrip(), # don't store new lines in the beginning.
                                        stop_token=stop_token,
                                        temperature=temperature,
                                        max_tokens=max_tokens)

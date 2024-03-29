@@ -73,12 +73,13 @@ class OpenaiAPIWrapper:
     ) -> dict:
         
         if is_chat_based_agent(engine): # gpt 3.5 onwards.
-            batched_requested = isinstance(prompt, List) and len(prompt) > 1
+            # check if batched requests (list of text prompts) are requested.
+            batched_requested = isinstance(prompt, List) and len(prompt) > 1 and isinstance(prompt[0], str)
             assert not (batched_requested and is_chat_based_agent(engine)), \
                 f"Open AI does not support batched requests. Check your prompt in the call to OpenaiAPIWrapper."
             
             if isinstance(prompt, List):
-                assert len(prompt) > 1, f"No prompt given as input to call OpenAI API."
+                assert len(prompt) >= 1, f"No prompt given as input to call OpenAI API."
 
             # check if prompt is a list of strings or a list of dictionaries
             # gpt-3.5-turbo onwards does not support a batched list of prompts.
