@@ -4,12 +4,13 @@ import openai
 import random
 import time
 
+# Use the latest openai chat /v1/ endpoint.
+# openai.api_key = os.getenv("OPENAI_API_KEY")
+openai_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-
-openai.api_key = os.getenv("OPENAI_API_KEY")
-# check if org is set
-if os.getenv("OPENAI_ORG") is not None:
-    openai.organization = os.getenv("OPENAI_ORG")
+# check if org is set (never needed it, so commenting out)
+# if os.getenv("OPENAI_ORG") is not None:
+#     openai.organization = os.getenv("OPENAI_ORG")
 MAX_TRIES= int(os.getenv("OPENAI_MAX_TRIES_INT")) if os.getenv("OPENAI_MAX_TRIES_INT") is not None else 10
 
 # from https://github.com/openai/openai-cookbook/blob/main/examples/How_to_handle_rate_limits.ipynb
@@ -87,7 +88,7 @@ class OpenaiAPIWrapper:
             conversational_content = [{"role": "user", "content": prompt[0]}] if isinstance(prompt, List) and isinstance(prompt[0], str) \
                         else ([{"role": "user", "content": prompt}] if isinstance(prompt, str) \
                         else prompt)
-            response = openai.ChatCompletion.create(
+            response = openai_client.chat.completions.create(
                 model=engine,
                 messages=conversational_content,
                 temperature=temperature,
