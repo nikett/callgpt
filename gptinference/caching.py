@@ -112,10 +112,11 @@ class Caching:
         assert key is not None and key, f"caching: cache key is empty ({key})."
         return self.cache.get(key, None)
 
-    def set(self, key, value) -> OpenAICacheValue:
+    def set(self, key, value, verbose=False) -> OpenAICacheValue:
         secs_since_last_save = time.time() - self.cache_started_at
         if secs_since_last_save % self.save_every_n_seconds == 0:
-            print(f"\nPeriodic cache saving... with {len(self.cache.items())} pts ... ", end=" ... ")
+            if verbose:
+                print(f"\nPeriodic cache saving... with {len(self.cache.items())} pts ... ", end=" ... ")
             self.save_cache()
         assert key is not None and key, f"caching: cache key is wrong ({key})."
         assert value is not None and len(f"{value}")>0, f"caching: value to cache is empty ({value})."
@@ -124,13 +125,16 @@ class Caching:
         # print(f" after {len(self.cache.items())} pts ")
         return value
 
-    def save_cache(self):
-        print(f"\nCaching: Saving openai cache [{self.cache_path}] with {len(self.cache.items())} pts in ", end=" ... ")
+    def save_cache(self, verbose=False):
+        if verbose:
+            print(f"\nCaching: Saving openai cache [{self.cache_path}] with {len(self.cache.items())} pts in ", end=" ... ")
         data_points = []
         for x, y in self.cache.items():
             key_with_value = x.to_json()
             key_with_value["first_response"] = y.first_response
             data_points.append(json.dumps(key_with_value))
-        print(f" {len(data_points)} lines", end=" .")
+        if verbose:
+            print(f" {len(data_points)} lines", end=" .")
         write_jsonl(data_points=data_points, outpath=self.cache_path, append=False)
-        print("done.")
+        if verbose:
+            print("done.")
