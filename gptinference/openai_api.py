@@ -7,7 +7,7 @@ import time
 
 # Use the latest openai chat /v1/ endpoint.
 # openai.api_key = os.getenv("OPENAI_API_KEY")
-openai_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+openai_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY") or openai.api_key)
 
 # check if org is set (never needed it, so commenting out)
 # if os.getenv("OPENAI_ORG") is not None:
