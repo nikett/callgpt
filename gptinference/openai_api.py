@@ -60,7 +60,6 @@ def retry_with_exponential_backoff(
 def is_chat_based_agent(engine):
     return engine.lower().strip() == "gpt-3.5-turbo" or engine.lower().strip() == "gpt-4" or engine.lower().strip() == "gpt-4-turbo"
 
-
 class OpenaiAPIWrapper:
     @staticmethod
     @retry_with_exponential_backoff
@@ -113,7 +112,31 @@ class OpenaiAPIWrapper:
 
     @staticmethod
     def get_first_response(response, engine) -> Dict[str, Any]:
-        """Returns the first response from the list of responses."""
+        """Returns the first response from the list of responses.
+        Sample response:
+        {
+        "choices": [
+            {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+                "content": "The 2020 World Series was played in Texas at Globe Life Field in Arlington.",
+                "role": "assistant"
+            },
+            "logprobs": null
+            }
+        ],
+        "created": 1677664795,
+        "id": "chatcmpl-7QyqpwdfhqwajicIEznoc6Q47XAyW",
+        "model": "gpt-3.5-turbo-0613",
+        "object": "chat.completion",
+        "usage": {
+            "completion_tokens": 17,
+            "prompt_tokens": 57,
+            "total_tokens": 74
+        }
+        }
+        """
         if is_chat_based_agent(engine):
             text = response.choices[0].message.content
         else:
