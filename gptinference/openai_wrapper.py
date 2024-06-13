@@ -18,6 +18,9 @@ def cost_in_dollars(num_input_tokens: int, num_output_tokens: int, engine: str) 
     elif engine == "gpt-4-turbo":
         # GPT-4-turbo costs $10 / 1M input tokens and $30 / 1M output tokens
         return (num_input_tokens * 10e-6) + (num_output_tokens * 30e-6)
+    elif engine == "gpt-4o":
+        # GPT-4-turbo costs $5 / 1M input tokens and $15 / 1M output tokens
+        return (num_input_tokens * 5e-6) + (num_output_tokens * 15e-6)
     else:
         raise ValueError(f"Pricing unavailable for requested engine: {engine}")
 
