@@ -56,15 +56,23 @@ class OpenAIWrapper:
                 #     "total_tokens": 74
                 #   }
                 # fill the cost estimator info with the dollar cost of the API call (since it was a cache miss).
-                cost_estimator_info_to_fill["cost_in_dollars"] = { 
-                    "dollar_cost": cost_in_dollars(
-                                                num_input_tokens=val_dict.usage.prompt_tokens,
-                                                num_output_tokens=val_dict.usage.completion_tokens,
-                                                engine=engine
-                                                ),
-                    "input_tokens": val_dict.usage.prompt_tokens,
-                    "output_tokens": val_dict.usage.completion_tokens
-                }
+                try:
+                    cost = cost_in_dollars(num_input_tokens=val_dict.usage.prompt_tokens,
+                                           num_output_tokens=val_dict.usage.completion_tokens,
+                                           engine=engine
+                                           )
+                    cost_estimator_info_to_fill["cost_in_dollars"] = { 
+                        "dollar_cost": cost,
+                        "input_tokens": val_dict.usage.prompt_tokens,
+                        "output_tokens": val_dict.usage.completion_tokens
+                    }
+                except Exception as e:
+                    print(f"Error in filling cost estimator info: {e}. Setting cost to 0.")
+                    cost_estimator_info_to_fill["cost_in_dollars"] = { 
+                        "dollar_cost": 0.0,
+                        "input_tokens": 0,
+                        "output_tokens": 0
+                    }
             else:
                 # This is a cache hit so we don't need to call the API and can just return the cached value without any cost.
                 cost_estimator_info_to_fill["cost_in_dollars"] = { 
